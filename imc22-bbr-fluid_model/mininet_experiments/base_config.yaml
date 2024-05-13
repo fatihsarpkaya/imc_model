@@ -1,0 +1,167 @@
+# This file gives the config defaults for all experiments.
+# It is designed for the 'BottleneckTopology'.
+mininet_log_level: info
+base_res_dir:
+
+more_output: False
+
+name: base_config
+
+# Sending Behavior:
+#-------------------------------
+# Either use command or detailled.
+# If command is nonempty, detailled will be ignored
+#-------------------------------
+behavior_command: 
+
+# configuration can be parsed from expressions like: TCP-1_STABLE-1
+sending_behavior:
+    - h1:
+        protocol: tcp-reno
+        tso_on: False
+    - h2:
+        protocol: tcp-reno
+        tso_on: False
+    - h3:
+        protocol: tcp-reno
+        tso_on: False
+    - h4:
+        protocol: tcp-reno
+        tso_on: False
+    - h5:
+        protocol: tcp-reno
+        tso_on: False
+    - h6:
+        protocol: tcp-reno
+        tso_on: False
+    - h7:
+        protocol: tcp-reno
+        tso_on: False
+    - h8:
+        protocol: tcp-reno
+        tso_on: False
+    - h9:
+        protocol: tcp-reno
+        tso_on: False
+    - h10:
+        protocol: tcp-reno
+        tso_on: False
+#-------------------------------
+# Bottleneck topology specific:
+link_latency: 1 # In ms
+link_capacity: 100 # In Mbps
+switch_buffer: 2 # Value: [0.0 - arbitrary] # factor of BDP. 0.0: no buffer. 1.0: buffer of one BDP
+source_latency: True
+source_latency_range: [1.375, 1.375]
+use_htb: False
+use_red: False
+
+# Special delay for "duals". designed for 2 flows.
+# 1rst flow starts immediately, second flow enters after the delay (in seconds)s
+# To deactivate: 0
+duel_delay: 0
+goes_second: tcp-cubic
+
+# These sampling resolutions affect the measurements
+tc_queue_sample_period: 0.001
+iperf_sampling_period: 1
+cwind_sampling_period: 0.01
+memory_sampling_period: 0.1
+
+iperf_sampling_period_server: 1
+
+# Timestep size of tcpdump data. Only affects postprocessing
+plot_load_resolution: 0.1
+
+# Used to display load and bandwidth. Should be changed if precision of results becomes bad. NOTE: logparser iperf matching need
+# to be changed manually!
+iperf_outfile_format: MBytes
+iperf_outfile_server_udp: iperf_s_udp.log
+iperf_outfile_server_tcp: iperf_s_tcp.log
+iperf_outfile_client: iperf_$.log # Replace $ with the hostID number
+
+send_duration: 11 # In seconds
+truncate_front: 5 # Currently, there is a bug if beginning is not truncated (+ many senders). So: can't be 0!
+                    # I guess it has to do with some senders already started and others not, making timestamps
+                    # different. For more clients, rather truncate more.
+truncate_back: 2
+
+mtu: 1500 # Ethernet MTU # No effect when changed
+mss: 1460  # Maximal Segment Size for TCP. based on ethernet MTU of 1500.
+udp_packet_size: 1512 # no effect when changed
+tcp_packet_size: 1514 # no effect when changed
+
+cbr_as_pss: False # If true, cbr for UDP is given in packets/second, else, it's given in Mbits/s. Very similar results.
+cbr_adjustment: 0.98 # factor by which the optimal cbr is adjusted. is used to allow recovering from small artifacts.
+disable_ipv6: True
+controller: remote  # Supported: default, remote # Remote causes 30s periodic artifacts
+
+# If a metric is not set to be plotted, it also might not be measured at all.
+plot_loss: True
+plot_throughput: True
+plot_cwnd: False     # Automatically overridden to false if not TCP # TODO currently broken, if more than 1 host
+plot_latency: True
+plot_queue: True
+plot_memory: False
+plot_jitter: True
+
+plot_iperf_losslat: False
+
+plot_hosts: # The metrics of these hosts will be explicitly plotted (all hosts will be measured anyway)
+    - 1
+
+defaults:
+    sending_behavior:
+        protocol: tcp-cubic # Will be used if no protocol is stated
+        cc_flavour: cubic # Will be used if only 'tcp' is used
+        udp_sending_behavior: stable # Only relevant for UDP
+        tso_on: False # Only relevant for TCP
+
+supported:
+    udp_sending_behavior:
+        - stable
+    cc_flavours:
+        - cubic
+        - bbr
+        - reno
+    protocols:
+        - tcp # Will assume default cc flavour
+        - tcp-cubic
+        - tcp-bbr
+        - udp # Will assume default behavior
+        - udp-stable
+        - tcp-reno
+        - tcp-bbr2
+
+send_behavior_parsing:
+    UDP: udp
+    STABLE: udp-stable
+    CBR: udp-stable
+    TCP: tcp # Will use the default TCP cc flavour
+    CUBIC: tcp-cubic
+    BBR: tcp-bbr
+    BBR2: tcp-bbr2
+    RENO: tcp-reno
+
+
+behavior_summary_mapping:
+    udp-stable: CBR
+    tcp-cubic: CUBIC
+    tcp-bbr: BBR
+    tcp-reno: RENO
+    tcp-bbr2: BBR2
+    
+# These are not explicitly set, but follow from the other configurations. ccexperiment.py infers them.
+# Therefore: setting these and executing with ccexperiment.py will have no effect
+result_dir:
+
+stats_file: stats.json
+
+inferred:
+    behavior_summary:
+    bw_delay_product: # unit: number of Packets of 1514B
+    cbr_rate:
+    num_senders:
+
+
+delete_raw_dump: True  # Deletes the raw data after logparser condensed it

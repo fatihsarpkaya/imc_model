@@ -1,0 +1,85 @@
+name: 50Mbps_30ms_cubic_8
+
+# --------------------------------------------------
+common_parameters:
+  send_duration: 1000 #s
+  truncate_front: 600 #s
+  truncate_back: 0 #s
+
+# --------------------------------------------------
+varying_parameters:
+  senders: [9]
+  link_capacity: [50] # Mbps
+  switch_buffer: [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0] # expressed in BDP of link l
+  cc_combination:
+    - ['CUBIC', 'BBR', 'BBR','BBR', 'BBR', 'BBR', 'BBR','BBR', 'BBR']
+  link_latency: [7.5] # In ms
+  source_latency_range: 
+    - [7.5, 7.5]
+  qdisc:
+    - Drop-tail
+
+# -------------------------------------------------
+model_parameters:
+  computation_parameters:
+    stp: 0.01 #ms
+  trace_parameters:
+    plot_trace: True
+  analysis_parameters:
+    analyze: True
+
+# --------------------------------------------------
+experiment_parameters:
+  pox_directory: [/home/simon/prog/pox, /home/simonsch/pox/]
+  base_config: mininet_experiments/base_config.yaml
+  runs: 3
+
+# --------------------------------------------------
+plots:
+
+  B_queueing_cc_combination_droptail:
+    model_results: True
+    experiment_results: True
+    legend: False
+    x: switch_buffer
+    y: avg_queue
+    z: cc_combination
+    other:
+      senders: 3
+      qdisc: Drop-tail
+      source_latency_range: [10, 10]
+    dropped_keys:
+      x: [0.5]
+  
+  B_fairness_cc_combination_droptail:
+    model_results: True
+    experiment_results: True
+    legend: False
+    focus: True
+    x: switch_buffer
+    y: jain_fairness_index
+    z: cc_combination
+    other:
+      senders: 3
+      qdisc: Drop-tail
+      source_latency_range: [10, 10]
+    dropped_keys:
+      x: [0.5]
+
+  B_utilization_cc_combination_droptail:
+    model_results: True
+    experiment_results: True
+    legend: False
+    focus: True
+    x: switch_buffer
+    y: utilization
+    z: cc_combination
+    other:
+      senders: 3
+      qdisc: Drop-tail
+      source_latency_range: [10, 10]
+    dropped_keys:
+      x: [0.5]
+
+
+trace_plots: []
