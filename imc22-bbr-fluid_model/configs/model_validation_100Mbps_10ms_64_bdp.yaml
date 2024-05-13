@@ -1,0 +1,136 @@
+name: model_original_5min_64
+
+# --------------------------------------------------
+common_parameters:
+  send_duration: 300 #s
+  truncate_front: 180 #s
+  truncate_back: 0 #s
+
+# --------------------------------------------------
+varying_parameters:
+  senders: [10]
+  link_capacity: [100] # Mbps
+  switch_buffer: [64.0] # expressed in BDP of link l
+  cc_combination:
+    - ['BBR']
+    - ['RENO', 'CUBIC']
+    - ['RENO', 'BBR']
+    - ['CUBIC', 'BBR']
+    - ['BBR2']
+    - ['RENO', 'BBR2']
+    - ['CUBIC','BBR2']
+    - ['BBR', 'BBR2']
+  link_latency: [10] # In ms
+  source_latency_range: 
+    - [5.0, 10.0]
+  qdisc:
+    - Drop-tail
+
+# -------------------------------------------------
+model_parameters:
+  computation_parameters:
+    stp: 0.01 #ms
+  trace_parameters:
+    plot_trace: True
+  analysis_parameters:
+    analyze: True
+
+# --------------------------------------------------
+experiment_parameters:
+  pox_directory: [/home/simon/prog/pox, /home/simonsch/pox/]
+  base_config: mininet_experiments/base_config.yaml
+  runs: 3
+
+# --------------------------------------------------
+plots:
+
+  B_queueing_cc_combination_droptail:
+    model_results: True
+    experiment_results: True
+    legend: True
+    x: switch_buffer
+    y: avg_queue
+    z: cc_combination
+    other:
+      senders: 10
+      qdisc: Drop-tail
+      source_latency_range: [5.0, 10.0]
+    dropped_keys:
+      x: [0.5]
+
+  B_jitter_cc_combination_droptail:
+    model_results: True
+    experiment_results: True
+    legend: True
+    x: switch_buffer
+    y: avg_jitter
+    z: cc_combination
+    other:
+      senders: 10
+      qdisc: Drop-tail
+      source_latency_range: [5.0, 10.0]
+    dropped_keys:
+      x: [0.5]
+  
+  B_fairness_cc_combination_droptail:
+    model_results: True
+    experiment_results: True
+    legend: True
+    focus: True
+    x: switch_buffer
+    y: jain_fairness_index
+    z: cc_combination
+    other:
+      senders: 10
+      qdisc: Drop-tail
+      source_latency_range: [5.0, 10.0]
+    dropped_keys:
+      x: [0.5]
+  
+  B_loss_cc_combination_droptail:
+    model_results: True
+    experiment_results: True
+    legend: True
+    x: switch_buffer
+    y: loss
+    z: cc_combination
+    other:
+      senders: 10
+      qdisc: Drop-tail
+      source_latency_range: [5.0, 10.0]
+    dropped_keys:
+      x: [0.5]
+
+
+  B_loss_cc_combination_droptail_zoom:
+    model_results: True
+    experiment_results: True
+    legend: True
+    x: switch_buffer
+    y: loss
+    z: cc_combination
+    y_limit: 1.5
+    other:
+      senders: 10
+      qdisc: Drop-tail
+      source_latency_range: [5.0, 10.0]
+    dropped_keys:
+      x: [0.5]
+
+  B_utilization_cc_combination_droptail:
+    model_results: True
+    experiment_results: True
+    legend: True
+    focus: True
+    x: switch_buffer
+    y: utilization
+    z: cc_combination
+    other:
+      senders: 10
+      qdisc: Drop-tail
+      source_latency_range: [5.0, 10.0]
+    dropped_keys:
+      x: [0.5]
+
+
+trace_plots: []
